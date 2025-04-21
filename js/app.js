@@ -10,6 +10,10 @@ let currentEpisodes = [];
 let currentVideoTitle = '';
 // 全局变量用于倒序状态
 let episodesReversed = false;
+// 豆瓣推荐相关变量
+let doubanPageStart = 0;
+let doubanPageSize = 12;
+let doubanCurrentTag = '热门';
 
 // 页面初始化
 document.addEventListener('DOMContentLoaded', function() {
@@ -24,6 +28,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 渲染搜索历史
     renderSearchHistory();
+
+    // 豆瓣推荐
+    renderDoubanTags();
+    setupDoubanRefreshBtn();
+    renderRecommend(doubanCurrentTag, doubanPageSize, doubanPageStart, false);
     
     // 设置默认API选择（如果是第一次加载）
     if (!localStorage.getItem('hasInitializedDefaults')) {
@@ -984,6 +993,111 @@ function toggleEpisodeOrder() {
             arrowIcon.style.transform = episodesReversed ? 'rotate(180deg)' : 'rotate(0deg)';
         }
     }
+}
+
+// 填充搜索框并触发搜索
+function fillAndSearch(title) {
+      const input = document.getElementById('searchInput');
+      input.value = title;
+      search();
+}
+
+// 渲染豆瓣tag选择器
+function renderDoubanTags() {
+    const tagContainer = document.getElementById('douban-tags');
+    if (!tagContainer) return;
+    tagContainer.innerHTML = '';
+    SEARCH_SUBJECT_TAGS.forEach(tag => {
+        const btn = document.createElement('button');
+        btn.className = 'px-3 py-1 rounded text-xs font-medium mr-1 mb-1 ' + (tag.title === doubanCurrentTag ? 'bg-pink-600 text-white' : 'bg-[#222] text-gray-300 hover:bg-pink-700 hover:text-white transition');
+        btn.textContent = tag.title;
+        btn.onclick = function() {
+            if (doubanCurrentTag !== tag.title) {
+                doubanCurrentTag = tag.title;
+                doubanPageStart = 0;
+                renderRecommend(doubanCurrentTag, doubanPageSize, doubanPageStart, true);
+                renderDoubanTags();
+            }
+        };
+        tagContainer.appendChild(btn);
+    });
+}
+
+// 换一批按钮事件
+function setupDoubanRefreshBtn() {
+    const btn = document.getElementById('douban-refresh-btn');
+    if (!btn) return;
+    btn.onclick = function() {
+        doubanPageStart += doubanPageSize;
+        if (doubanPageStart > 9 * doubanPageSize) {
+            doubanPageStart = 0;
+        }
+        renderRecommend(doubanCurrentTag, doubanPageSize, doubanPageStart, true);
+    };
+}
+
+// 渲染热门推荐
+function renderRecommend(title, pageLimit, pageStart, loading) {
+    const container = document.getElementById("douban-results");
+    const tag = SEARCH_SUBJECT_TAGS.find(item => item.title === title);
+    const target = tag ? tag.url.replace('{pageLimit}', pageLimit).replace('{pageStart}', pageStart) : null;
+    if (!target) {
+        container.innerHTML = `<div class="col-span-full text-red-400 text-center">❌ 无法获取推荐数据，请稍后重试。</div>`;
+        return;
+    }
+    if (loading === true) {
+        showLoading();
+    }
+
+    fetch(PROXY_URL + encodeURIComponent(target))
+        .then(response => response.json())
+        .then(data => {
+            const fragment = document.createDocumentFragment();
+            data.subjects.forEach(tv => {
+                const item = document.createElement("div");
+                item.className = "bg-white/5 hover:bg-white/10 transition transform scale-95 rounded-lg overflow-hidden p-2 flex flex-col items-center text-center";
+                item.innerHTML = `
+                <!-- 点击图片触发搜索 -->
+                <button 
+                  class="relative w-full flex justify-center group active:scale-95 transition transform duration-150 ease-in-out"
+                  onclick="fillAndSearch('${tv.title}')"
+                >
+                <div class="relative w-full aspect-[2/3] overflow-hidden rounded-md">
+                    <img 
+                    src="${tv.cover}" 
+                    alt="${tv.title}" 
+                    class="object-cover rounded-md group-hover:opacity-90 transition duration-300 ease-in-out"
+                    />
+                    <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs font-semibold px-2 py-1 rounded">
+                        评分: ${tv.rate || "暂无"}
+                    </div>
+                </div>
+                </button>
+            
+                <!-- 标题跳转链接 -->
+                <a 
+                  href="${tv.url}" 
+                  target="_blank" 
+                  class="mt-2 w-full block text-sm font-semibold truncate hover:text-blue-400"
+                >
+                  ${tv.title}
+                </a>
+              `;
+                fragment.appendChild(item);
+            });
+
+            container.innerHTML = "";
+            container.appendChild(fragment);
+        })
+        .catch(err => {
+            container.innerHTML = `<div class="col-span-full text-red-400 text-center">❌ 获取数据失败，请稍后重试。</div>`;
+            console.error("豆瓣 API 请求失败：", err);
+        })
+        .finally(() => {
+            if (loading === true) {
+                hideLoading();
+            }
+        })
 }
 
 // app.js 或路由文件中

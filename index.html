@@ -8,7 +8,8 @@
     <meta name="keywords" content="在线视频,免费视频,视频搜索,电影,电视剧,LibreTV">
     <meta name="author" content="LibreTV Team">
     <meta name="robots" content="index, follow">
-    
+    <meta name="referrer" content="no-referrer">
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://libretv.is-an.org/">
@@ -208,6 +209,20 @@
                 <div id="results" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 </div>
             </div>
+
+            <!-- 热播推荐区 -->
+            <div class="mt-10 mb-2 border-t border-[#333] pt-8 flex flex-wrap items-center justify-between">
+                <div class="flex flex-wrap gap-2" id="douban-tags">
+                    <!-- 动态插入tag按钮 -->
+                </div>
+                <button id="douban-refresh-btn" class="px-3 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-lg text-xs shadow hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 transition-all duration-300 ml-2">
+                    换一批
+                </button>
+            </div>
+            <!-- 热播推荐 -->
+			<div id="douban-results" class="mt-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+				<div class="col-span-full text-center text-gray-400" id="loading2">正在加载推荐数据...</div>
+			</div>
         </div>
     </div>
 

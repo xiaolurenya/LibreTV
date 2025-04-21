@@ -212,3 +212,51 @@ const CUSTOM_API_CONFIG = {
 
 // 新增隐藏内置黄色采集站API的变量，默认为true
 const HIDE_BUILTIN_ADULT_APIS = true;
+
+// 搜索推荐标签配置
+const SEARCH_SUBJECT_TAGS = [
+    {
+        title: '热门',
+        url: 'https://movie.douban.com/j/search_subjects?type=tv&tag=热门&sort=recommend&page_limit={pageLimit}&page_start={pageStart}'
+    },
+    {
+        "title": '国产',
+        "url": 'https://movie.douban.com/j/search_subjects?type=tv&tag=国产剧&sort=recommend&page_limit={pageLimit}&page_start={pageStart}'
+    },
+    {
+        "title": '美剧',
+        "url": 'https://movie.douban.com/j/search_subjects?type=tv&tag=美剧&sort=recommend&page_limit={pageLimit}&page_start={pageStart}'
+    },
+    {
+        "title": '英剧',
+        "url": 'https://movie.douban.com/j/search_subjects?type=tv&tag=英剧&sort=recommend&page_limit={pageLimit}&page_start={pageStart}'
+    },
+    {
+        "title": '番剧',
+        "url": 'https://movie.douban.com/j/search_subjects?type=tv&tag=日本动画&sort=recommend&page_limit={pageLimit}&page_start={pageStart}'
+    },
+    {
+        "title": '综艺',
+        "url": 'https://movie.douban.com/j/search_subjects?type=tv&tag=综艺&sort=recommend&page_limit={pageLimit}&page_start={pageStart}'
+    },
+    {
+        "title": '纪录片',
+        "url": 'https://movie.douban.com/j/search_subjects?type=tv&tag=纪录片&sort=recommend&page_limit={pageLimit}&page_start={pageStart}'
+    },
+    {
+        title: '电影',
+        url: 'https://movie.douban.com/j/search_subjects?type=movie&tag=热门&sort=recommend&page_limit={pageLimit}&page_start={pageStart}'
+    },
+    {
+        title: '高分',
+        url: 'https://movie.douban.com/j/search_subjects?type=movie&tag=豆瓣高分&sort=recommend&page_limit={pageLimit}&page_start={pageStart}'
+    },
+    {
+        title: '动画电影',
+        url: 'https://movie.douban.com/j/search_subjects?type=movie&tag=动画电影&sort=recommend&page_limit={pageLimit}&page_start={pageStart}'
+    },
+    {
+        title: '冷门佳片',
+        url: 'https://movie.douban.com/j/search_subjects?type=movie&tag=冷门佳片&sort=recommend&page_limit={pageLimit}&page_start={pageStart}'
+    },
+];
